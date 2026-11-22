@@ -41,6 +41,15 @@ rule changes, change it here in the same pull request.
 - Watch for: runs that report `failed` above zero twice in a row, and any run
   that returns an error. Check `payee_reminders.error` for the cause.
 
+## Payments
+
+- Stripe sends paid Checkout Sessions to `POST /api/stripe/webhook`. In
+  Stripe, check the endpoint's recent deliveries: every one should be a 2xx.
+- A log line "Applying paid session ... failed" means someone paid and the
+  plan was not raised. Fix that the same day: find the session in Stripe and
+  re-send the event from the endpoint's delivery list.
+- Refunds are the owner's call. Do not issue one without approval.
+
 ## Support playbook
 
 To be written with the Play 1 launch.

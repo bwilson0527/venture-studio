@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 
 import { addVendor, sendRequests, uploadVendors, type ImportState } from "../../actions";
@@ -40,6 +41,14 @@ export function UploadVendors({ businessId }: { businessId: string }) {
       {state.status === "error" ? (
         <p role="alert" className={errorText}>
           {state.message}
+          {state.upgrade ? (
+            <>
+              {" "}
+              <Link href="/dashboard/plan" className="font-medium underline">
+                See plans
+              </Link>
+            </>
+          ) : null}
         </p>
       ) : null}
       {state.status === "done" ? (

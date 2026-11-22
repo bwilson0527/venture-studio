@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { planName, seasonTaxYear } from "@studio/core/billing";
+
 import { getFirm, listBusinesses, type BusinessSummary } from "@/lib/firm-store";
 import { requireSession } from "@/lib/session";
 
@@ -20,9 +22,9 @@ function plural(count: number, one: string, many: string): string {
   return `${count} ${count === 1 ? one : many}`;
 }
 
-/** The 1099 season being worked on now: last year's payments until April, then this year's. */
+/** The season being worked on now, then the one before it. */
 function taxYearChoices(now: Date): number[] {
-  const current = now.getUTCMonth() < 3 ? now.getUTCFullYear() - 1 : now.getUTCFullYear();
+  const current = seasonTaxYear(now);
   return [current, current - 1];
 }
 
@@ -40,7 +42,7 @@ async function Overview() {
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{firm.name}</h1>
         <p className="mt-1 text-sm text-muted">
           {businesses.length} of {plural(firm.businessLimit, "client business", "client businesses")} on
-          your {firm.plan} plan
+          your {planName(firm.plan)} plan
         </p>
       </header>
 
@@ -70,7 +72,12 @@ async function Overview() {
               </div>
             ) : (
               <p className="mt-1 text-muted">
-                Your plan covers {plural(firm.businessLimit, "client business", "client businesses")}.
+                Your plan covers {plural(firm.businessLimit, "client business", "client businesses")}.{" "}
+                {firm.plan === "firm" ? null : (
+                  <Link href="/dashboard/plan" className="font-medium text-foreground underline">
+                    See plans
+                  </Link>
+                )}
               </p>
             )}
           </section>

@@ -126,3 +126,33 @@ including whether it carried full IDs. Responses are sent with `no-store`.
 The layout is a general one with plain column names, which filing tools can
 map on import. Layouts matched to specific tools (Avalara 1099 & W-9, Tax1099,
 IRS IRIS) are not built yet: their templates have to be confirmed first.
+
+## Paid plans
+
+Free covers 1 client business and 10 vendors. Season ($149) covers 25 client
+businesses and Firm ($299) covers 100, both with no limit on vendors. Each is
+one payment for a 1099 season, taken by Stripe Checkout. A firm on Season pays
+only the difference to move up. Prices and limits live in
+`packages/core/src/billing.ts`.
+
+The firm's owner buys from `/dashboard/plan`. The server creates the Checkout
+Session with the price, so the buyer cannot change it. Stripe then confirms the
+payment two ways, and either one is enough:
+
+- the signed webhook, `POST /api/stripe/webhook`, for
+  `checkout.session.completed` and `checkout.session.async_payment_succeeded`;
+- the buyer's return to `/dashboard/plan/confirm`, which asks Stripe about the
+  session.
+
+Both call the database function `apply_plan_purchase`, which records the
+payment in `plan_purchases` and raises the firm's limits. It is keyed on the
+Checkout Session id, so a payment delivered twice is applied once. The webhook
+checks Stripe's signature before believing anything, refuses requests older
+than five minutes, and ignores sessions for anything else sold on the same
+Stripe account.
+
+Settings: `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`. With no secret key
+the plan page says paid plans open soon and nothing can be bought.
+
+Not built yet: refunds (done by hand in Stripe, then the plan is lowered in the
+database), sales tax, and ending a plan when its season is over.

@@ -14,13 +14,16 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
   return (
     <div className="flex flex-1 flex-col">
       <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-3.5">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3.5">
           <Link href="/dashboard" className="text-base font-semibold tracking-tight">
             {BRAND.name}
           </Link>
-          <nav aria-label="Dashboard" className="flex items-center gap-5 text-sm">
+          <nav aria-label="Dashboard" className="flex items-center gap-4 text-sm sm:gap-5">
             <Link href="/dashboard" className="text-muted hover:text-foreground">
               Clients
+            </Link>
+            <Link href="/dashboard/plan" className="text-muted hover:text-foreground">
+              Plan
             </Link>
             <Link href="/dashboard/settings" className="text-muted hover:text-foreground">
               Settings

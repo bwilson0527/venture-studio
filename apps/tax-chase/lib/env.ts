@@ -49,4 +49,19 @@ export const serverEnv = {
   get cronSecret() {
     return required("CRON_SECRET");
   },
+  /** Paid plans are switched off until Stripe's secret key is set. */
+  get billingEnabled() {
+    return Boolean(process.env.STRIPE_SECRET_KEY);
+  },
+  get stripeSecretKey() {
+    return required("STRIPE_SECRET_KEY");
+  },
+  /** The signing secret of the webhook endpoint in Stripe. Starts with whsec_. */
+  get stripeWebhookSecret() {
+    return required("STRIPE_WEBHOOK_SECRET");
+  },
+  /** Overridden only in local tests. */
+  get stripeApiUrl() {
+    return (process.env.STRIPE_API_URL || "https://api.stripe.com").replace(/\/+$/, "");
+  },
 };
