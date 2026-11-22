@@ -42,6 +42,8 @@ export type W9EmailRun = {
   skipped: number;
   /** True if the provider asked us to slow down and the run ended early. */
   stoppedEarly: boolean;
+  /** True if the run used up its time. The rest go out on the next run. */
+  outOfTime: boolean;
 };
 
 /** Pause between sends, to stay under the provider's rate limit. */
@@ -62,7 +64,17 @@ function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
-export async function runW9Emails(now: Date, limit: number): Promise<W9EmailRun> {
+/**
+ * Send what is due, up to `limit` emails or until `budgetMs` has passed,
+ * whichever comes first. The host stops a request that runs too long, so
+ * the run stops itself first, between emails, and leaves nothing half done.
+ */
+export async function runW9Emails(
+  now: Date,
+  limit: number,
+  budgetMs = Number.POSITIVE_INFINITY,
+): Promise<W9EmailRun> {
+  const startedAt = Date.now();
   const run: W9EmailRun = {
     considered: 0,
     requestsSent: 0,
@@ -70,6 +82,7 @@ export async function runW9Emails(now: Date, limit: number): Promise<W9EmailRun>
     failed: 0,
     skipped: 0,
     stoppedEarly: false,
+    outOfTime: false,
   };
 
   // Read every setting up front, so a missing one stops the run before any
@@ -85,6 +98,10 @@ export async function runW9Emails(now: Date, limit: number): Promise<W9EmailRun>
 
   let sentAny = false;
   for (const candidate of candidates ?? []) {
+    if (Date.now() - startedAt > budgetMs) {
+      run.outOfTime = true;
+      break;
+    }
     run.considered += 1;
 
     const plan = planW9Email(
