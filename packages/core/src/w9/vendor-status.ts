@@ -93,7 +93,14 @@ export function w9Status(vendor: VendorFacts, day: (iso: string) => string): Sta
   };
 }
 
-export function form1099Status(vendor: VendorFacts, taxYear: number): StatusLine {
+/** The part of a vendor the 1099 sort looks at. */
+export type SortFacts = {
+  amountPaidCents: number | null;
+  legalOrMedical: boolean;
+  w9: { classification: TaxClassification; exemptPayeeCode: string | null } | null;
+};
+
+export function form1099Status(vendor: SortFacts, taxYear: number): StatusLine {
   if (vendor.amountPaidCents === null) {
     return { label: "No amount", tone: "skip", detail: "Enter what was paid to sort this vendor." };
   }

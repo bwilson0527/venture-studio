@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { getFirm, listBusinesses, listVendors } from "@/lib/firm-store";
 import { requireSession } from "@/lib/session";
 
+import { primaryButton, quietButton } from "../../styles";
 import { AddVendor, SendRequests, UploadVendors } from "./add-vendors";
 import { VendorBoard } from "./vendor-board";
 import { toVendorView } from "./vendor-view";
@@ -72,6 +73,25 @@ async function Client({ params }: { params: Promise<{ id: string }> }) {
             The 1099 column is a first sort to work from, not tax advice. The decision about who
             receives a 1099 is yours.
           </p>
+        </section>
+      ) : null}
+
+      {vendors.length > 0 ? (
+        <section className="mt-8 rounded-xl border border-line bg-surface p-6">
+          <h2 className="text-lg font-semibold">Export for 1099 filing</h2>
+          <p className="mt-1 max-w-2xl text-sm text-muted">
+            One row per vendor, with the W-9 details and the 1099 sort, as a CSV you can import into
+            your filing tool. The filing file contains full taxpayer IDs, so store it as carefully
+            as the forms themselves. Every download is recorded.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a href={`/dashboard/clients/${id}/export?tins=full`} download className={primaryButton}>
+              Download for filing
+            </a>
+            <a href={`/dashboard/clients/${id}/export`} download className={quietButton}>
+              Download with last four digits only
+            </a>
+          </div>
         </section>
       ) : null}
 

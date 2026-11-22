@@ -110,3 +110,19 @@ session cookie fresh and redirects signed-out visitors, as a convenience only.
 Two Supabase settings are needed before real sign-ins work: the email template
 for sign-in must include the code (`{{ .Token }}`), and the project needs a
 custom SMTP sender, because the built-in one only sends a few emails an hour.
+
+## The export for 1099 filing
+
+The vendor board offers two CSV downloads (`/dashboard/clients/<id>/export`):
+one with full taxpayer IDs for filing (`?tins=full`), and one with the last
+four digits only. Each has one row per vendor with the W-9 details and the
+1099 sort. The layout lives in `packages/core/src/w9/export.ts`.
+
+Taxpayer IDs are decrypted on the server, in memory, only for a user who can
+see the client business. The database function `export_w9s` checks the
+membership again and records every download in `exports` and the audit log,
+including whether it carried full IDs. Responses are sent with `no-store`.
+
+The layout is a general one with plain column names, which filing tools can
+map on import. Layouts matched to specific tools (Avalara 1099 & W-9, Tax1099,
+IRS IRIS) are not built yet: their templates have to be confirmed first.
