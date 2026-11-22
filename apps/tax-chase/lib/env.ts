@@ -11,6 +11,13 @@ export const serverEnv = {
   get supabaseUrl() {
     return required("SUPABASE_URL");
   },
+  /**
+   * The publishable (anon) key. Signed-in firm users reach the database with
+   * it plus their own session, so row level security applies to them.
+   */
+  get supabasePublishableKey() {
+    return required("SUPABASE_PUBLISHABLE_KEY");
+  },
   /** The secret (service role) key. Bypasses row level security: server only. */
   get supabaseSecretKey() {
     return required("SUPABASE_SECRET_KEY");

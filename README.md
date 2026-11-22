@@ -86,3 +86,27 @@ Every email carries the vendor's private form link, rebuilt each time from
 plus one-click unsubscribe for mail apps). A vendor who submits their W-9 or
 turns reminders off gets no more email. Nothing is sent until `RESEND_API_KEY`
 and `EMAIL_FROM` are set.
+
+## The firm dashboard
+
+Firm users sign in at `/sign-in` with a six-digit code sent to their email
+(Supabase Auth). There are no passwords, and a new email address gets a new
+account the same way. The first visit asks for the firm's name, then:
+
+- `/dashboard` lists the firm's client businesses with how many W-9s are in.
+- `/dashboard/clients/<id>` is the vendor board for one client business.
+  Upload a vendor CSV or add vendors by hand, send W-9 requests, and see each
+  vendor's W-9 status beside a first-pass 1099 sort. A vendor can be edited,
+  put on hold or removed, and their private form link can be shown so the firm
+  can send it themselves.
+- `/dashboard/settings` holds the firm name, reply-to address and time zone.
+
+Everything the dashboard reads or changes goes through a database function
+called as the signed-in user (`lib/firm-store.ts`), so row level security
+decides what each firm can reach. `lib/session.ts` is the one place that says
+who is signed in, and every page and action starts there. `proxy.ts` keeps the
+session cookie fresh and redirects signed-out visitors, as a convenience only.
+
+Two Supabase settings are needed before real sign-ins work: the email template
+for sign-in must include the code (`{{ .Token }}`), and the project needs a
+custom SMTP sender, because the built-in one only sends a few emails an hour.

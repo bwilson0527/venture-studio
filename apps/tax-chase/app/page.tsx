@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { BRAND } from "@/lib/brand";
 
@@ -166,6 +167,9 @@ export default function Home() {
           <a href="#questions" className="hidden text-muted hover:text-foreground sm:inline">
             Questions
           </a>
+          <Link href="/sign-in" className="text-muted hover:text-foreground">
+            Sign in
+          </Link>
           <a
             href="#early-access"
             className="rounded-md border border-foreground px-3.5 py-1.5 font-medium hover:bg-foreground hover:text-background"
