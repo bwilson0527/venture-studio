@@ -84,6 +84,26 @@ begin
 end
 $$;
 
+-- Runs a statement that must fail with an error whose message contains
+-- `expected_message` (for example a plan-limit trigger).
+create function test.expect_error(statement text, expected_message text, description text)
+returns void
+language plpgsql
+as $$
+begin
+  begin
+    execute statement;
+  exception
+    when others then
+      if position(expected_message in sqlerrm) > 0 then
+        return;
+      end if;
+      raise exception 'FAILED (wrong error "%"): %', sqlerrm, description;
+  end;
+  raise exception 'FAILED (no error): %', description;
+end
+$$;
+
 create function test.sign_in(user_id uuid) returns void
 language sql
 as $$ select set_config('request.jwt.claim.sub', user_id::text, false) $$;
