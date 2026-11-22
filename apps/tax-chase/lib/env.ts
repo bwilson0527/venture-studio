@@ -49,6 +49,14 @@ export const serverEnv = {
   get cronSecret() {
     return required("CRON_SECRET");
   },
+  /** Bounce and complaint news is refused until the webhook's signing secret is set. */
+  get emailWebhookEnabled() {
+    return Boolean(process.env.RESEND_WEBHOOK_SECRET);
+  },
+  /** The signing secret of the webhook in Resend. Starts with whsec_. */
+  get resendWebhookSecret() {
+    return required("RESEND_WEBHOOK_SECRET");
+  },
   /** Paid plans are switched off until Stripe's secret key is set. */
   get billingEnabled() {
     return Boolean(process.env.STRIPE_SECRET_KEY);
