@@ -10,7 +10,8 @@
     "./secrets": "./src/secrets.ts",
     "./w9/tin": "./src/w9/tin.ts",
     "./w9/needs1099": "./src/w9/needs1099.ts",
-    "./w9/payee-import": "./src/w9/payee-import.ts"
+    "./w9/payee-import": "./src/w9/payee-import.ts",
+    "./w9/form": "./src/w9/form.ts"
   },
   "scripts": {
     "test": "vitest run",
