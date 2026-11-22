@@ -5,7 +5,9 @@
   "type": "module",
   "exports": {
     "./reminders": "./src/reminders/cadence.ts",
-    "./tokens": "./src/tokens.ts"
+    "./tokens": "./src/tokens.ts",
+    "./clients/import": "./src/clients/import.ts",
+    "./clients/status": "./src/clients/status.ts"
   },
   "scripts": {
     "test": "vitest run",
