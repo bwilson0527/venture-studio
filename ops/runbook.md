@@ -41,6 +41,11 @@ rule changes, change it here in the same pull request.
 - Watch for: runs that report `failed` above zero twice in a row, and any run
   that returns an error. Check `payee_reminders.error` for the cause.
 
+- Resend reports bounces and spam complaints to `POST /api/resend/webhook`.
+  Watch the complaint rate in Resend: its policy allows closing an account
+  above 0.08% complaints or 4% bounces. If either climbs, pause the hourly
+  job and tell the owner.
+
 ## Payments
 
 - Stripe sends paid Checkout Sessions to `POST /api/stripe/webhook`. In

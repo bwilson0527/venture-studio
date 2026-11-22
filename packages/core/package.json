@@ -17,7 +17,8 @@
     "./w9/export": "./src/w9/export.ts",
     "./leads": "./src/leads.ts",
     "./billing": "./src/billing.ts",
-    "./rate-limit": "./src/rate-limit.ts"
+    "./rate-limit": "./src/rate-limit.ts",
+    "./email-events": "./src/email-events.ts"
   },
   "scripts": {
     "test": "vitest run",

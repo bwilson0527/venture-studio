@@ -87,6 +87,16 @@ plus one-click unsubscribe for mail apps). A vendor who submits their W-9 or
 turns reminders off gets no more email. Nothing is sent until `RESEND_API_KEY`
 and `EMAIL_FROM` are set.
 
+### Bounces and spam complaints
+
+Resend tells us when an address bounces or a vendor marks a request as spam
+(`POST /api/resend/webhook`, events `email.bounced` and `email.complained`,
+signed with `RESEND_WEBHOOK_SECRET`). A permanent bounce marks the address as
+failing: the vendor leaves the hourly run and the board shows "Email failing"
+until the firm corrects the address. A complaint turns that vendor's reminders
+off. News about an address the firm has already replaced is ignored. Temporary
+bounces are left to Resend, which keeps trying.
+
 ## The firm dashboard
 
 Firm users sign in at `/sign-in` with a six-digit code sent to their email
