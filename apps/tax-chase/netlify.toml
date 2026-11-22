@@ -1,0 +1,18 @@
+"$schema" = "https://open-api.netlify.com/netlify.schema.json"
+
+# Netlify settings for the tax-chase app. In the Netlify project, set the
+# package directory to apps/tax-chase and leave the base directory at the
+# repository root; the paths below are relative to that root.
+#
+# Secrets (Supabase, Resend, Stripe, the encryption key) are set in Netlify's
+# environment variables, never here. See ops/launch.md.
+
+[build]
+  command = "pnpm --filter tax-chase build"
+  publish = "apps/tax-chase/.next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "apps/tax-chase/netlify/functions"

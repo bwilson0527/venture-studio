@@ -69,8 +69,11 @@ for the settings the app needs.
 
 ## Requests and reminders
 
-A scheduler calls `POST /api/cron/w9-emails` about once an hour with
-`Authorization: Bearer $CRON_SECRET`. Each run looks at vendors whose W-9 is
+A scheduler calls `POST /api/cron/w9-emails` every five minutes with
+`Authorization: Bearer $CRON_SECRET` (on Netlify, the scheduled function in
+`apps/tax-chase/netlify/functions/w9-emails.mts`). A run stops starting new
+emails after 20 seconds, so it always answers inside the scheduler's limit, and
+the next run carries on. Each run looks at vendors whose W-9 is
 outstanding and sends what is due: the first request as soon as a firm asks for
 it, then reminders after 3 days and every 4 days up to 8, only between 9 and 6
 in the firm's time zone. The schedule lives in `packages/core/src/reminders`
@@ -92,7 +95,7 @@ and `EMAIL_FROM` are set.
 Resend tells us when an address bounces or a vendor marks a request as spam
 (`POST /api/resend/webhook`, events `email.bounced` and `email.complained`,
 signed with `RESEND_WEBHOOK_SECRET`). A permanent bounce marks the address as
-failing: the vendor leaves the hourly run and the board shows "Email failing"
+failing: the vendor leaves the email run and the board shows "Email failing"
 until the firm corrects the address. A complaint turns that vendor's reminders
 off. News about an address the firm has already replaced is ignored. Temporary
 bounces are left to Resend, which keeps trying.
@@ -180,3 +183,9 @@ The network address comes from the host's own header
 (`x-nf-client-connection-ip` on Netlify). Where there is none, as in local
 development, the per-network limits are skipped. If the counter cannot be
 reached the attempt is allowed and the fault is logged.
+
+## Hosting
+
+The app is set up for Netlify: `apps/tax-chase/netlify.toml` holds the build
+settings and `apps/tax-chase/netlify/functions/` the scheduled job. The steps
+for the first deploy, and every setting it needs, are in `ops/launch.md`.

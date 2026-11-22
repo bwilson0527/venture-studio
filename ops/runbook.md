@@ -35,7 +35,8 @@ rule changes, change it here in the same pull request.
 
 ## Scheduled jobs
 
-- Hourly: `POST /api/cron/w9-emails` with the cron secret. Sends W-9 requests
+- Every five minutes: the Netlify function `w9-emails` calls
+  `POST /api/cron/w9-emails` with the cron secret. Sends W-9 requests
   and due reminders to vendors on behalf of firms. These are the product's own
   transactional emails to vendors, not marketing to prospects.
 - Watch for: runs that report `failed` above zero twice in a row, and any run
@@ -43,7 +44,7 @@ rule changes, change it here in the same pull request.
 
 - Resend reports bounces and spam complaints to `POST /api/resend/webhook`.
   Watch the complaint rate in Resend: its policy allows closing an account
-  above 0.08% complaints or 4% bounces. If either climbs, pause the hourly
+  above 0.08% complaints or 4% bounces. If either climbs, pause the email
   job and tell the owner.
 
 ## Payments
