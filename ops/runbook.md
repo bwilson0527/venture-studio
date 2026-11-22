@@ -54,7 +54,25 @@ rule changes, change it here in the same pull request.
 - A log line "Applying paid session ... failed" means someone paid and the
   plan was not raised. Fix that the same day: find the session in Stripe and
   re-send the event from the endpoint's delivery list.
-- Refunds are the owner's call. Do not issue one without approval.
+- Refunds are the owner's call. Do not issue one without approval. The terms
+  promise a refund to a firm that asks within the window set in `LEGAL`
+  (`apps/tax-chase/lib/brand.ts`), so bring such a request to the owner the
+  same day. After a refund, lower the firm's plan in the database.
+
+## Promises in the privacy policy and terms
+
+`/privacy` and `/terms` commit us to these. Treat each as a deadline.
+
+- A request to see, correct or delete personal information gets an answer
+  within 30 days.
+- A vendor who writes to us about their W-9 is pointed to the firm that asked
+  for it, and the request is passed on to that firm.
+- A firm that asks to close its account has its data deleted within 30 days,
+  and can ask for a copy for 30 days after closing.
+- If a firm's data is reached by someone who should not have it, the firm is
+  told without undue delay. Escalate to the owner at once.
+- Firms are emailed before a change to how their data is used, or a material
+  change to the terms, takes effect.
 
 ## Support playbook
 

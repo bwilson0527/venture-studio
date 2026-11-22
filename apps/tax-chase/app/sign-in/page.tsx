@@ -23,6 +23,17 @@ export default function SignInPage() {
       <div className="mt-8">
         <SignInForm />
       </div>
+      <p className="mt-6 text-xs text-muted">
+        By signing in you agree to the{" "}
+        <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">
+          terms
+        </Link>{" "}
+        and the{" "}
+        <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+          privacy policy
+        </Link>
+        .
+      </p>
       <noscript>
         <p className="mt-6 text-sm text-muted">Signing in needs JavaScript. Please turn it on.</p>
       </noscript>

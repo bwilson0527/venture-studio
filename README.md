@@ -170,6 +170,18 @@ the plan page says paid plans open soon and nothing can be bought.
 Not built yet: refunds (done by hand in Stripe, then the plan is lowered in the
 database), sales tax, and ending a plan when its season is over.
 
+## Privacy policy and terms
+
+`/privacy` and `/terms` live in `apps/tax-chase/app/(legal)`. The company name,
+governing state, contact details, effective date and refund window come from
+`LEGAL` in `apps/tax-chase/lib/brand.ts`. While any of them is missing both
+pages show a draft notice and tell search engines not to index them.
+
+The privacy policy describes what the code does today: what is stored, who
+can see it, which providers handle it and when it is deleted. Change the
+policy in the same pull request as any change to those things, such as adding
+an analytics tool or a new provider.
+
 ## Limits on the public pages
 
 Sign-in codes, code guesses and the early-access form are counted before the

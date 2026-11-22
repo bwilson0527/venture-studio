@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -114,7 +115,12 @@ async function Plan({ searchParams }: { searchParams: PageProps<"/dashboard/plan
 
       <p className="mt-4 text-sm text-muted">
         Payment is taken by Stripe on its own page. We never see or store your card number.
-        {firm.plan === "season" ? " Moving up to Firm costs only the difference." : ""}
+        {firm.plan === "season" ? " Moving up to Firm costs only the difference." : ""} Buying a
+        plan is covered by the{" "}
+        <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">
+          terms
+        </Link>
+        .
       </p>
 
       {purchases.length > 0 ? (
