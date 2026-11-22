@@ -19,6 +19,7 @@ Plays 2 (COI compliance tracker) and 3 (carrier fraud monitor) will be added as
 pnpm install
 pnpm dev:tax      # Play 1 on http://localhost:3000
 pnpm test         # unit tests
+pnpm test:db      # migrations and access-rule tests (needs DATABASE_URL)
 pnpm typecheck
 pnpm lint
 pnpm build
@@ -32,3 +33,9 @@ Migrations in `supabase/migrations` are plain SQL and are applied to the
 Supabase project in order. Every table has row level security: firm users reach
 only their own organization's rows, and the client portal runs server-side
 with the service role after checking the link token.
+
+`pnpm test:db` applies every migration to a throwaway database on a plain
+Postgres, using stand-ins for Supabase's `auth` and `storage` schemas, and runs
+the SQL tests in `supabase/tests`. They check that one firm can never read or
+change another firm's rows and that nothing is open to signed-out visitors.
+Add a test there with every migration that touches access rules.

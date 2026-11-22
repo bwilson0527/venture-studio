@@ -28,8 +28,10 @@ rule changes, change it here in the same pull request.
 
 ## Standing approvals
 
-None granted yet. Until the owner grants them, ask before merging, sending
-email to customers or prospects, refunding, or moving ad budget.
+- Granted Nov 22, 2026: Claude decides when its own pull requests are ready
+  and merges them. Merge only with CI green and no open review comments.
+- Not granted yet: emailing customers or prospects, refunds, and moving ad
+  budget. Ask before each of these.
 
 ## Support playbook
 
