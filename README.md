@@ -6,7 +6,7 @@ portal, an automated reminder engine, and document extraction.
 | Path | What it is |
 | --- | --- |
 | `apps/tax-chase` | Play 1: tax-season document collection for small tax firms (Next.js) |
-| `packages/core` | Shared code: reminder cadence, portal tokens |
+| `packages/core` | Shared code: reminder cadence, portal link tokens, CSV, field encryption, and the W-9 logic (TIN format checks, vendor import, 1099 sorting) |
 | `supabase/migrations` | Database schema and row level security |
 | `ops/runbook.md` | How the products are operated day to day |
 
