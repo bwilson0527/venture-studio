@@ -33,6 +33,14 @@ rule changes, change it here in the same pull request.
 - Not granted yet: emailing customers or prospects, refunds, and moving ad
   budget. Ask before each of these.
 
+## Scheduled jobs
+
+- Hourly: `POST /api/cron/w9-emails` with the cron secret. Sends W-9 requests
+  and due reminders to vendors on behalf of firms. These are the product's own
+  transactional emails to vendors, not marketing to prospects.
+- Watch for: runs that report `failed` above zero twice in a row, and any run
+  that returns an error. Check `payee_reminders.error` for the cause.
+
 ## Support playbook
 
 To be written with the Play 1 launch.

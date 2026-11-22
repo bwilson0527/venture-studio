@@ -23,6 +23,8 @@ export type PortalPayee = {
   taxYear: number;
   /** The W-9 currently on file, if the payee has already sent one. */
   submitted: { at: string; tinType: TinType; tinLast4: string } | null;
+  /** True once the payee has turned reminder emails off. */
+  remindersStopped: boolean;
 };
 
 export type RecordOutcome =
@@ -56,7 +58,19 @@ export async function findPayeeByToken(token: string): Promise<PortalPayee | nul
     submitted: row.submitted_at
       ? { at: row.submitted_at, tinType: row.submitted_tin_type, tinLast4: row.submitted_tin_last4 }
       : null,
+    remindersStopped: Boolean(row.email_opted_out),
   };
+}
+
+/** Turn reminder emails off for the payee who holds this link. False for an unknown link. */
+export async function stopReminders(token: string): Promise<boolean> {
+  if (!TOKEN_SHAPE.test(token)) return false;
+
+  const { data, error } = await adminClient().rpc("portal_stop_emails", {
+    p_token_hash: hashPortalToken(token),
+  });
+  if (error) throw new Error(`portal_stop_emails failed: ${error.code} ${error.message}`);
+  return data === true;
 }
 
 export async function recordW9(

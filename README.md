@@ -66,3 +66,23 @@ The taxpayer ID is encrypted in the app with `TIN_ENCRYPTION_KEY` before it is
 stored, bound to its vendor, and never returned to the browser or written to
 logs. Firm users see the last four digits. See `apps/tax-chase/.env.example`
 for the settings the app needs.
+
+## Requests and reminders
+
+A scheduler calls `POST /api/cron/w9-emails` about once an hour with
+`Authorization: Bearer $CRON_SECRET`. Each run looks at vendors whose W-9 is
+outstanding and sends what is due: the first request as soon as a firm asks for
+it, then reminders after 3 days and every 4 days up to 8, only between 9 and 6
+in the firm's time zone. The schedule lives in `packages/core/src/reminders`
+and the wording in `packages/core/src/w9/emails.ts`.
+
+A run claims each vendor before sending, so overlapping runs cannot send the
+same email twice, and every send or failure is logged in `payee_reminders`.
+Three failures in a row stop the retries for that address. If the mail provider
+says to slow down, the run ends early and the next one carries on.
+
+Every email carries the vendor's private form link, rebuilt each time from
+`PORTAL_TOKEN_SECRET`, and a link to turn reminders off (`/w9/<token>/stop`,
+plus one-click unsubscribe for mail apps). A vendor who submits their W-9 or
+turns reminders off gets no more email. Nothing is sent until `RESEND_API_KEY`
+and `EMAIL_FROM` are set.
