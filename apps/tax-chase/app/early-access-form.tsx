@@ -103,6 +103,11 @@ export function EarlyAccessForm() {
           That did not go through. Please try again in a moment.
         </p>
       ) : null}
+      {state.status === "busy" ? (
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
+          Too many sign-ups have come from your network. Please try again in an hour.
+        </p>
+      ) : null}
       <button
         type="submit"
         disabled={pending}
