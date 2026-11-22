@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { BRAND } from "@/lib/brand";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tax document chase",
-  description: "Collect tax documents from clients without the chasing.",
+  title: BRAND.name,
+  description: BRAND.tagline,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

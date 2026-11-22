@@ -14,6 +14,9 @@ begin
   end if;
 end
 $$;
+-- Roles outlive the throwaway test database, so set this even when the role
+-- was already there: on Supabase the service role always bypasses RLS.
+alter role service_role bypassrls;
 
 create schema auth;
 create table auth.users (id uuid primary key);
@@ -52,7 +55,7 @@ alter default privileges in schema public
 
 -- Test helpers.
 create schema test;
-grant usage on schema test to anon, authenticated;
+grant usage on schema test to anon, authenticated, service_role;
 
 create function test.expect(condition boolean, description text) returns void
 language plpgsql
@@ -108,4 +111,4 @@ create function test.sign_in(user_id uuid) returns void
 language sql
 as $$ select set_config('request.jwt.claim.sub', user_id::text, false) $$;
 
-grant execute on all functions in schema test to anon, authenticated;
+grant execute on all functions in schema test to anon, authenticated, service_role;
