@@ -3,11 +3,13 @@
 import { validateLead } from "@studio/core/leads";
 
 import { captureLead } from "@/lib/leads-store";
+import { allowedForVisitor } from "@/lib/rate-limit";
 
 export type EarlyAccessState =
   | { status: "idle" }
   | { status: "invalid"; errors: Partial<Record<"email" | "firmName", string>> }
   | { status: "failed" }
+  | { status: "busy" }
   | { status: "done" };
 
 export async function requestEarlyAccess(
@@ -28,6 +30,8 @@ export async function requestEarlyAccess(
   if (!result.ok) return { status: "invalid", errors: result.errors };
   // A bot filled the hidden field: answer as if it worked and store nothing.
   if (result.value === null) return { status: "done" };
+
+  if (!(await allowedForVisitor("leadPerIp"))) return { status: "busy" };
 
   try {
     await captureLead(result.value, text("source")?.trim() || null);

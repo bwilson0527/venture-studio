@@ -156,3 +156,17 @@ the plan page says paid plans open soon and nothing can be bought.
 
 Not built yet: refunds (done by hand in Stripe, then the plan is lowered in the
 database), sales tax, and ending a plan when its season is over.
+
+## Limits on the public pages
+
+Sign-in codes, code guesses and the early-access form are counted before the
+work is done (`take_rate_limit` in the database, rules in
+`packages/core/src/rate-limit.ts`). A sign-in address gets 5 codes an hour and
+10 guesses per 15 minutes; a network address gets 20 codes an hour, 40 guesses
+per 15 minutes and 5 early-access sign-ups an hour. Emails and network
+addresses are hashed with a server secret before they are stored as keys.
+
+The network address comes from the host's own header
+(`x-nf-client-connection-ip` on Netlify). Where there is none, as in local
+development, the per-network limits are skipped. If the counter cannot be
+reached the attempt is allowed and the fault is logged.

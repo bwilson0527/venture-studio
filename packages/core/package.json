@@ -16,7 +16,8 @@
     "./w9/vendor-status": "./src/w9/vendor-status.ts",
     "./w9/export": "./src/w9/export.ts",
     "./leads": "./src/leads.ts",
-    "./billing": "./src/billing.ts"
+    "./billing": "./src/billing.ts",
+    "./rate-limit": "./src/rate-limit.ts"
   },
   "scripts": {
     "test": "vitest run",
