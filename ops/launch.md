@@ -8,14 +8,22 @@ The app has so far run only against local stand-ins for Supabase, Resend and
 Stripe. Expect small surprises on the first real run and do the smoke test at
 the end before telling anyone the address.
 
-## 1. Domain (owner)
+## 1. Domain and legal details (owner)
 
 Buy the domain and point its DNS at Netlify. Everything below uses it.
 
+Fill in `LEGAL` in `apps/tax-chase/lib/brand.ts`: the company name, the state
+whose law governs the terms, a contact email on the domain, a postal address,
+the effective date and the refund window. Until every value is set, `/privacy`
+and `/terms` show a draft notice and are hidden from search engines. Do not
+take a payment while they are drafts. Both pages were written without a
+lawyer; a review before paid advertising starts is worth its cost.
+
 ## 2. Supabase (owner approves the cost prompt)
 
-1. Create a new project in the owner's organization. Do not touch the other
-   projects there.
+1. Create a new project in the owner's organization, in a US region (the
+   privacy policy says the data is stored in the United States). Do not touch
+   the other projects there.
 2. Apply every file in `supabase/migrations/` in order.
 3. Check that the tables in `public` are granted to `authenticated` and
    `service_role`. The migrations rely on Supabase's default grants.
@@ -68,11 +76,12 @@ Until the secret key is set, the plan page says paid plans open soon.
 
 ## 6. Smoke test
 
-1. Sign in with an emailed code and create a firm.
-2. Add a client business and a vendor with an address you can read.
-3. Send the request. Within about five minutes, inside working hours, the
+1. Open `/privacy` and `/terms`: no draft notice, no gaps in square brackets.
+2. Sign in with an emailed code and create a firm.
+3. Add a client business and a vendor with an address you can read.
+4. Send the request. Within about five minutes, inside working hours, the
    email arrives. Open the link and sign the W-9.
-4. The board shows the W-9 as received. Download the export.
-5. In Stripe test mode, or with a real card refunded afterwards (owner),
+5. The board shows the W-9 as received. Download the export.
+6. In Stripe test mode, or with a real card refunded afterwards (owner),
    buy the Season plan and check the plan page.
-6. In Resend and Stripe, check that the webhook deliveries are all 2xx.
+7. In Resend and Stripe, check that the webhook deliveries are all 2xx.

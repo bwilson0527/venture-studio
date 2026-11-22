@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { BRAND } from "@/lib/brand";
@@ -70,7 +71,10 @@ async function Request({ params }: { params: Promise<{ token: string }> }) {
       <footer className="mt-12 border-t border-neutral-200 pt-5 text-xs text-neutral-500 dark:border-neutral-800">
         {BRAND.name} collects this form on behalf of {payee.firmName}. Your taxpayer ID is encrypted
         before it is stored and is shared only with {payee.firmName} and {payee.businessName}.
-        Questions about why you received this request should go to them.
+        Questions about why you received this request should go to them.{" "}
+        <Link href="/privacy" target="_blank" className="underline underline-offset-2">
+          Privacy policy
+        </Link>
       </footer>
     </>
   );

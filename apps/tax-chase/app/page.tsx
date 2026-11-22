@@ -289,10 +289,20 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-line">
-        <p className="mx-auto w-full max-w-6xl px-5 py-8 text-xs text-muted">
-          {BRAND.name} collects and organizes W-9s. It is not a tax advisor and does not file
-          returns; the decision about who receives a 1099 is yours.
-        </p>
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-start justify-between gap-x-8 gap-y-3 px-5 py-8 text-xs text-muted">
+          <p className="max-w-2xl">
+            {BRAND.name} collects and organizes W-9s. It is not a tax advisor and does not file
+            returns; the decision about who receives a 1099 is yours.
+          </p>
+          <nav aria-label="Legal" className="flex gap-5">
+            <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+              Privacy
+            </Link>
+            <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">
+              Terms
+            </Link>
+          </nav>
+        </div>
       </footer>
     </div>
   );
