@@ -102,7 +102,7 @@ select test.expect(
   'a first import adds every vendor');
 select test.expect(
   (select name = 'Alpha LLC' and email = 'alpha@example.com' and amount_paid_cents = 500000
-          and status = 'not_requested'
+          and status = 'not_requested' and portal_token_version = 1
    from public.business_payees(:'biz') where id = '60000000-0000-0000-0000-000000000001'),
   'imported names and emails are tidied');
 

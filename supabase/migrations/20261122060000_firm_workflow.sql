@@ -168,6 +168,8 @@ returns table (
   legal_or_medical boolean,
   status public.payee_status,
   paused boolean,
+  -- With the id, lets the app rebuild the vendor's private link.
+  portal_token_version integer,
   email_opted_out boolean,
   email_failures integer,
   request_sent_at timestamptz,
@@ -187,7 +189,8 @@ stable
 set search_path = ''
 as $$
   select p.id, p.name, p.email, p.amount_paid_cents, p.legal_or_medical, p.status,
-         p.paused, p.email_opted_out, p.email_failures, p.request_sent_at,
+         p.paused, p.portal_token_version, p.email_opted_out, p.email_failures,
+         p.request_sent_at,
          p.reminders_sent, p.last_reminder_at,
          s.legal_name, s.business_name, s.tax_classification, s.exempt_payee_code,
          s.tin_type, s.tin_last4, s.backup_withholding, s.signed_at
