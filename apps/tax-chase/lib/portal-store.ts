@@ -1,12 +1,12 @@
 import "server-only";
 
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { encryptField } from "@studio/core/secrets";
 import { hashPortalToken } from "@studio/core/tokens";
 import type { W9Submission } from "@studio/core/w9/form";
 import type { TinType } from "@studio/core/w9/tin";
 
 import { serverEnv } from "./env";
+import { adminClient } from "./supabase-admin";
 
 /**
  * Data access for the payee portal. Payees never sign in, so these calls use
@@ -32,15 +32,6 @@ export type RecordOutcome =
 /** Links carry 32 random bytes, base64url. Anything else is not worth a query. */
 const TOKEN_SHAPE = /^[A-Za-z0-9_-]{43}$/;
 
-let client: SupabaseClient | undefined;
-
-function admin(): SupabaseClient {
-  client ??= createClient(serverEnv.supabaseUrl, serverEnv.supabaseSecretKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  return client;
-}
-
 /** The context a taxpayer ID is sealed with, so it only decrypts for its own payee. */
 export function tinContext(payeeId: string): string {
   return `w9-tin:${payeeId}`;
@@ -49,7 +40,7 @@ export function tinContext(payeeId: string): string {
 export async function findPayeeByToken(token: string): Promise<PortalPayee | null> {
   if (!TOKEN_SHAPE.test(token)) return null;
 
-  const { data, error } = await admin().rpc("portal_lookup_payee", {
+  const { data, error } = await adminClient().rpc("portal_lookup_payee", {
     p_token_hash: hashPortalToken(token),
   });
   if (error) throw new Error(`portal_lookup_payee failed: ${error.code} ${error.message}`);
@@ -77,7 +68,7 @@ export async function recordW9(
   if (!TOKEN_SHAPE.test(token)) return { ok: false, reason: "invalid_link" };
 
   const { tin, ...rest } = submission;
-  const { error } = await admin().rpc("portal_submit_w9", {
+  const { error } = await adminClient().rpc("portal_submit_w9", {
     p_token_hash: hashPortalToken(token),
     p_form: {
       legal_name: rest.legalName,
