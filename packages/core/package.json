@@ -13,6 +13,7 @@
     "./w9/payee-import": "./src/w9/payee-import.ts",
     "./w9/form": "./src/w9/form.ts",
     "./w9/emails": "./src/w9/emails.ts",
+    "./w9/vendor-status": "./src/w9/vendor-status.ts",
     "./leads": "./src/leads.ts"
   },
   "scripts": {
