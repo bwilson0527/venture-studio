@@ -102,7 +102,10 @@ async function Client({ params }: { params: Promise<{ id: string }> }) {
           </h2>
           {limit !== null ? (
             <p className="mt-1 text-sm text-muted">
-              Your plan covers {limit} vendors per client business. {vendors.length} used.
+              Your plan covers {limit} vendors per client business. {vendors.length} used.{" "}
+              <Link href="/dashboard/plan" className="font-medium text-foreground underline">
+                See plans
+              </Link>
             </p>
           ) : null}
           <div className="mt-4">

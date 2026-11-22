@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import type { FormState } from "./actions";
 import { errorText } from "./styles";
 
@@ -7,6 +9,14 @@ export function FormStatus({ state }: { state: FormState }) {
     return (
       <p role="alert" className={errorText}>
         {state.message}
+        {state.upgrade ? (
+          <>
+            {" "}
+            <Link href="/dashboard/plan" className="font-medium underline">
+              See plans
+            </Link>
+          </>
+        ) : null}
       </p>
     );
   }

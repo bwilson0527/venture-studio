@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { planName } from "@studio/core/billing";
+
 import { getFirm } from "@/lib/firm-store";
 import { requireSession } from "@/lib/session";
 
@@ -69,7 +71,7 @@ async function Settings() {
         timeZones={zones}
       />
       <p className="mt-8 border-t border-line pt-5 text-sm text-muted">
-        Signed in as {session.email ?? "unknown"} · {firm.plan} plan
+        Signed in as {session.email ?? "unknown"} · {planName(firm.plan)} plan
       </p>
     </>
   );

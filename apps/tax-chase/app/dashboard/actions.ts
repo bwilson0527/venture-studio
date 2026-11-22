@@ -3,8 +3,10 @@
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { isPaidPlan } from "@studio/core/billing";
 import { importPayeesFromCsv, parseMoneyToCents, type ImportIssue } from "@studio/core/w9/payee-import";
 
+import { startCheckout } from "@/lib/billing";
 import {
   createBusiness,
   createFirm,
@@ -23,12 +25,13 @@ import { requireSession, type Session } from "@/lib/session";
 
 export type FormState =
   | { status: "idle" }
-  | { status: "error"; message: string }
+  /** `upgrade` is set when a bigger plan would have let this through. */
+  | { status: "error"; message: string; upgrade?: boolean }
   | { status: "done"; message: string };
 
 export type ImportState =
   | { status: "idle" }
-  | { status: "error"; message: string; issues: ImportIssue[] }
+  | { status: "error"; message: string; upgrade?: boolean; issues: ImportIssue[] }
   | { status: "done"; counts: ImportCounts; issues: ImportIssue[] };
 
 const TRY_AGAIN = "That did not go through. Nothing was changed. Please try again.";
@@ -98,6 +101,14 @@ async function failure(error: unknown, session: Session, what: string): Promise<
   return TRY_AGAIN;
 }
 
+/** True when the refusal was the plan's limit, so the form can point to the plans. */
+function hitPlanLimit(error: unknown): boolean {
+  return (
+    error instanceof StoreRefusal &&
+    (error.reason === "business_limit_reached" || error.reason === "payee_limit_reached")
+  );
+}
+
 export async function signOut(): Promise<void> {
   const session = await requireSession();
   await session.db.auth.signOut();
@@ -121,7 +132,11 @@ export async function addBusiness(_previous: FormState, formData: FormData): Pro
   try {
     id = await createBusiness(session.db, field(formData, "name"), Number(field(formData, "taxYear")));
   } catch (error) {
-    return { status: "error", message: await failure(error, session, "Adding a client business") };
+    return {
+      status: "error",
+      message: await failure(error, session, "Adding a client business"),
+      upgrade: hitPlanLimit(error),
+    };
   }
   redirect(`/dashboard/clients/${id}`);
 }
@@ -171,7 +186,12 @@ export async function uploadVendors(
     refresh();
     return { status: "done", counts, issues: parsed.issues.slice(0, 20) };
   } catch (error) {
-    return { status: "error", message: await failure(error, session, "Importing vendors"), issues: [] };
+    return {
+      status: "error",
+      message: await failure(error, session, "Importing vendors"),
+      upgrade: hitPlanLimit(error),
+      issues: [],
+    };
   }
 }
 
@@ -208,7 +228,11 @@ export async function addVendor(
       message: counts.added === 1 ? `Added ${name}.` : `${name} was already on the list.`,
     };
   } catch (error) {
-    return { status: "error", message: await failure(error, session, "Adding a vendor") };
+    return {
+      status: "error",
+      message: await failure(error, session, "Adding a vendor"),
+      upgrade: hitPlanLimit(error),
+    };
   }
 }
 
@@ -282,4 +306,32 @@ export async function showVendorLink(businessId: string, vendorId: string): Prom
     console.error("Building a vendor link failed:", error instanceof Error ? error.message : "unknown error");
     return null;
   }
+}
+
+/** Send the firm's owner to Stripe to pay for a plan. */
+export async function buyPlan(plan: string): Promise<FormState> {
+  const session = await requireSession();
+  if (!isPaidPlan(plan)) return { status: "error", message: TRY_AGAIN };
+
+  let url: string;
+  try {
+    const started = await startCheckout(session, plan);
+    if (!started.ok) {
+      switch (started.reason) {
+        case "closed":
+          return { status: "error", message: "Paid plans are not open yet. Nothing was charged." };
+        case "not_owner":
+          return { status: "error", message: "Only the firm's owner can buy a plan." };
+        case "nothing_to_buy":
+          return { status: "error", message: "Your firm already has this plan. Reload the page." };
+        case "no_firm":
+          return { status: "error", message: "You no longer have access to this. Reload the page." };
+      }
+    }
+    url = started.url;
+  } catch (error) {
+    console.error("Starting checkout failed:", error instanceof Error ? error.message : "unknown error");
+    return { status: "error", message: "The payment page could not be opened. Nothing was charged. Please try again." };
+  }
+  redirect(url);
 }
